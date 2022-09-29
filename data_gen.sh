@@ -30,7 +30,13 @@ do
 	#printf '%x\n'  $(( (($cipher ^ 0x90) + $r) & 0xff )) >> results.txt #m[0]=0x39
 
 	#K[2] compute with Ciphertext - Fact 3 #TODO
-	d=0x`printf '%02x' $(( 2 + 3 ))` #for i ranging from 0 to 12, d[i]=i+3, where iv=z FF x and z=i+3
+	d=0 #for i ranging from 0 to 12, d[i]=sum(i+3), where iv=z FF x and z=i+3
+
+	for (( j = 1; j <= 5 ; j++ ))
+	do
+		d=$(( $d + $j ))
+	done
+
 	r=0x`printf '%02x' $(( -$i -$d - 0x7e - 0x1a ))` #k[0]=0x7e k[1]=1a
 	printf '%02x\n'  $(( (($cipher ^ 0x90) + $r) & 0xff )) >> results.txt #m[0]=0x39
 
