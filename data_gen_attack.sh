@@ -7,6 +7,10 @@ iv=${z}ff00
 parcial_key=7e1a0bbc8c770667be44dce10c
 key=${iv}${parcial_key}
 
+guessed_message=""
+guessed_key=()
+echo "key is $parcial_key and message is $m"
+
 echo -n > results.txt
 for (( i=-1; i<=12; i++ ))
 do
@@ -30,7 +34,7 @@ done
 
 if [[ $i -eq -1 ]] # FACT 1, IF IV=01FFxx
 then
-	echo -n "Guessing m[0] ... "
+	echo -n "   Guessing m[0] ... "
 	while IFS= read -r line
 	 do 
 		x=0x`echo -n $line | cut -c 7,8`
@@ -42,12 +46,14 @@ then
 	done < gathered/bytes_01ffxx.dat 
 
 	echo "done"
-	echo -n -e "\tGuessed m[0] "
-	cat gathered/results.dat | sort | uniq -c -d | sort | tail -1 | cut -c 6-
+	guessed_message=0x`cat gathered/results.dat | sort | uniq -c -d | sort | tail -1 | awk '{print $1, $2}' | cut -d ' ' -f 2`
+	echo -n -e "\tGuessed m[0]=$guessed_message with freq. \t"
 
-elif [[ $i -eq 0 ]]
+	cat gathered/results.dat | sort | uniq -c -d | sort | tail -1 | awk '{print $1, $2}' | cut -d ' ' -f 1
+
+elif [[ $i -eq 0 ]] # FACT 2, IF IV=03FFxx
 then
-	echo -n "Guessing k[0] ... "
+	echo -n "   Guessing k[0] ... "
 	while IFS= read -r line
 	 do 
 		x=0x`echo -n $line | cut -c 7,8`
@@ -55,38 +61,69 @@ then
 
 		#K[0] compute with Ciphertext - Fact 2
 		r=0x`printf '%x' $(( -$x -6 ))`
-		printf '%x\n'  $(( (($cipher ^ 0x90) + $r) & 0xff )) >> gathered/results.dat #m[0]=0x39
+		printf '%x\n'  $(( (($cipher ^ $guessed_message) + $r) & 0xff )) >> gathered/results.dat 
 	done < gathered/bytes_03ffxx.dat 
 
 	echo "done"
-	echo -n -e "\tGuessed k[0] "
-	cat gathered/results.dat | sort | uniq -c -d | sort | tail -1 | cut -c 6-
+	value=0x`cat gathered/results.dat | sort | uniq -c -d | sort | tail -1 | awk '{print $1, $2}' | cut -d ' ' -f 2`
+	guessed_key+=("$value")
+	echo -n -e "\tGuessed k[0]=${guessed_key[0]} with freq. \t"
+	cat gathered/results.dat | sort | uniq -c -d | sort | tail -1 | awk '{print $1, $2}' | cut -d ' ' -f 1
 
-elif [[ $i -eq 1 ]]
+elif [[ $i -eq 1 ]] # FACT 2, IF IV=04FFxx
 then
-	echo -n "Guessing k[1] ... "
+	echo -n "   Guessing k[1] ... "
 	while IFS= read -r line
 	 do 
 		x=0x`echo -n $line | cut -c 7,8`
 		cipher=`echo -n $line | cut -c 10,11,12,13`
 
 		#K[1] compute with Ciphertext - Fact 2
-		r=0x`printf '%x' $(( -$x -10 - 0x7e ))` #k[0]=0x7e
-		printf '%x\n'  $(( (($cipher ^ 0x90) + $r) & 0xff )) >> gathered/results.dat #m[0]=0x39
+		r=0x`printf '%x' $(( -$x -10 - ${guessed_key[0]} ))` 
+		printf '%x\n'  $(( (($cipher ^ $guessed_message) + $r) & 0xff )) >> gathered/results.dat 
 	done < gathered/bytes_04ffxx.dat 
 
 	echo "done"
-	echo -n -e "\tGuessed k[1] "
-	cat gathered/results.dat | sort | uniq -c -d | sort | tail -1 | cut -c 6-
-else
-	echo -e "\tapply fact 3"
+	value=0x`cat gathered/results.dat | sort | uniq -c -d | sort | tail -1 | awk '{print $1, $2}' | cut -d ' ' -f 2`
+	guessed_key+=("$value")
+	echo -n -e "\tGuessed k[1]=${guessed_key[1]} with freq. \t"
+	cat gathered/results.dat | sort | uniq -c -d | sort | tail -1 | awk '{print $1, $2}' | cut -d ' ' -f 1
+
+else # FACT 3, IF IV=zFFx
+
+	echo -n "   Guessing k[$(( $z-3 ))] ... "
+	while IFS= read -r line
+	 do 
+
+		x=0x`echo -n $line | cut -c 7,8`
+		cipher=`echo -n $line | cut -c 10,11,12,13`
+
+		d=0 #for i ranging from 0 to 12, d[i]=sum(i+3), where iv=z FF x and z=i+3
+
+		for (( j = 1; j <= $z ; j++ ))
+		do
+			d=$(( $d + $j ))
+		done
+
+		key_sum=0
+	
+		for value in ${guessed_key[@]}
+		do
+		  	key_sum=$(( $key_sum + $value )) #previous keys guessed are added
+		done
+
+		r=0x`printf '%02x' $(( -$x -$d - $key_sum ))` 
+		printf '%02x\n'  $(( (($cipher ^ $guessed_message) + $r) & 0xff )) >> gathered/results.dat 
+	done < gathered/bytes_${Z}ffxx.dat 
+
+	echo "done"
+	value=0x`cat gathered/results.dat | sort | uniq -c -d | sort | tail -1 | awk '{print $1, $2}' | cut -d ' ' -f 2`
+	guessed_key+=("$value")
+	echo -n -e "\tGuessed k[$(( $z-3 ))]=${guessed_key[$(( $z-3 ))]} with freq. \t"
+	cat gathered/results.dat | sort | uniq -c -d | sort | tail -1 | awk '{print $1, $2}' | cut -d ' ' -f 1
 
 fi
 
 	z=0x`printf "%02x" $(($i+4))`
 done
 
-
-#while IFS= read -r line; do echo -n $line | cut -d ' ' -f 1; done < gathered/bytes_01ffxx.dat 
-
-#| cut -c 12,13 7,8
