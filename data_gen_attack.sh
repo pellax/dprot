@@ -1,10 +1,10 @@
 #! /usr/bin/bash
 
 
-m=90 #ASCII messsage
+m=`openssl rand -hex 1`
+parcial_key=`openssl rand -hex 13`
 z=0x01
 iv=${z}ff00
-parcial_key=`openssl rand -hex 13`
 key=${iv}${parcial_key}
 
 guessed_message=""
