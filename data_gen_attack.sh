@@ -4,12 +4,13 @@
 m=90 #ASCII messsage
 z=0x01
 iv=${z}ff00
-parcial_key=7e1a0bbc8c770667be44dce10c
+parcial_key=`openssl rand -hex 13`
 key=${iv}${parcial_key}
 
 guessed_message=""
 guessed_key=()
 echo "key is $parcial_key and message is $m"
+mkdir -p gathered
 
 echo -n > results.txt
 for (( i=-1; i<=12; i++ ))
