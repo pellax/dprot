@@ -33,6 +33,6 @@ $bash get_padding.sh mess1.dat //para obtener el mensaje 1 junto al padding en p
 
 $cat head.dat padded.dat tag1.dat mess2.dat > forgery.dat //obtener el forgery 
 
-De nuevo forgertag.dat == tag2.dat
+De nuevo sería forgertag.dat == tag2.dat, por lo que hemos obtenido un par mensaje/clave válidos
 
 
