@@ -26,3 +26,13 @@ $openssl enc -aes-128-cbc -K `cat hexkey.dat` -iv 0 -in forgery.dat | tail -c 16
 
 
 forgertag.dat == tag2.dat
+
+Orden de comandos ataque (sin conocer la clave):
+
+$bash get_padding.sh mess1.dat //para obtener el mensaje 1 junto al padding en padded.dat
+
+$cat head.dat padded.dat tag1.dat mess2.dat > forgery.dat //obtener el forgery 
+
+De nuevo forgertag.dat == tag2.dat
+
+
