@@ -1,0 +1,12 @@
+Padding is required 65 bits
+
+Last block is complete with 512 bits: size mod 512==0
+	Add a complete block of padding
+	1 + 0(447) + aabbcc
+Block is not complete with 447<block_size<512
+	Start padding and finish in next block
+	1 + 0(till block finish) + 0(448) + aabbcc
+Block is block_size<=447
+	Start padding and finish in same block
+	1 + 0(512-size-65) + aabbcc
+
