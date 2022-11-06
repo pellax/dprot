@@ -29,7 +29,7 @@ else
 
 		printf "\x$(printf "%02x" "128")" >> padded.dat #APPEND 0x80
 		for run in $( seq 1 $necessary_zeros ); do printf "\\x$(printf "%x" "0")"; done >> padded.dat #APPEND NECESSARY 0x00
-		printf "%016x" $total_bits | xxd -r -p >> padded.dat #APPEND SIZE (8 BYTES)
+		echo 00: `printf "%016x" $total_bits` | xxd -r | xxd -g 8 -e | xxd -r >> padded.dat #APPEND SIZE in LITTLE-ENDIAN (8 BYTES)
 
 	elif [[ $lastblock_bits -gt $(( $block_size - $mandatory_bits )) && $lastblock_bits -lt $block_size ]] #LAST BLOCK DOESN'T FIT MANDATORY PADDING
 	then
@@ -42,7 +42,7 @@ else
 		#--BLOCK FINISHED-- 
 
 		for run in {1..56}; do printf "\\x$(printf "%x" "0")"; done >> padded.dat  #APPEND 56 BYTES OF 0x00 TO FINISH BLOCK
-		printf "%016x" $total_bits | xxd -r -p >> padded.dat #APPEND SIZE (8 BYTES)
+		echo 00: `printf "%016x" $total_bits` | xxd -r | xxd -g 8 -e | xxd -r >> padded.dat #APPEND SIZE in LITTLE-ENDIAN (8 BYTES)
 
 
 	fi
