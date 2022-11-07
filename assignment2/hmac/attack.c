@@ -3,18 +3,11 @@
 #include <string.h>
 #include <openssl/md5.h>
 
+typedef unsigned int UINT4;
+
 MD5_LONG gethexword32(const unsigned char *digest){
 
-    int i;
-    printf("4 bytes leidos: ");
-    for (i = 0; i < 4; i++)
-    {
-        printf("%02x", digest[i]);
-    }
-
     MD5_LONG var =(unsigned) digest[0]|((unsigned)digest[1]<<8)|((unsigned)digest[2]<<16)|((unsigned)digest[3]<<24); //Little endian to Int
-
-        printf(" -- %u\n",var);
 
     return var;
 
@@ -84,15 +77,7 @@ unsigned char *file2md5(const char *filename, const char *digest_file, const cha
         MD5_Init(&c);
 
         set_ctx(&c,digest,nblocks); //Set context according to padded message and passing the tag
-
-        printf("TAG:\t\t");
-        int i;
-        for (i = 0; i < 16; i++)
-        {
-            printf("%02x", digest[i]);
-        }
-        printf("\n");
-
+        
         f = fopen (newdata_file, "rb"); //Open new data file (padded) to append
         char * new_data=0;
 
@@ -112,18 +97,18 @@ unsigned char *file2md5(const char *filename, const char *digest_file, const cha
         else
             return NULL;
 
-        length*=8; //To bits
 
         while (length > 0) { //Call update for each new block of data
             
-            if (length > 512) {
-                MD5_Update(&c, new_data, 512);
+            if (length > 64) {
+                MD5_Update(&c, new_data, 64);
             } else {
                 MD5_Update(&c, new_data, length);
             }
-            length -= 512;
-            new_data += 512;
+            length -= 64;
+            new_data += 64;
         }
+
 
         unsigned char new_digest[MD5_DIGEST_LENGTH];
 
@@ -144,7 +129,7 @@ int main(int argc, char **argv) {
         unsigned char * new_tag=0;
         new_tag=file2md5(argv[1],argv[2],argv[3]);
         printf("FORGER TAG:\t");
-        for (int i = 0; i < 16; i++)
+        for (int i = 0; i < MD5_DIGEST_LENGTH; i++)
             printf("%02x", new_tag[i]);
         putchar ('\n');      
 
