@@ -78,19 +78,20 @@ unsigned char *file2md5(const char *filename, const char *digest_file, const cha
             fclose (f);
 
         }
+        else
+            return NULL;
 
-        printf("TAG:");
+        MD5_Init(&c);
+
+        set_ctx(&c,digest,nblocks); //Set context according to padded message and passing the tag
+
+        printf("TAG:\t\t");
         int i;
         for (i = 0; i < 16; i++)
         {
             printf("%02x", digest[i]);
         }
         printf("\n");
-
-
-        MD5_Init(&c);
-
-        set_ctx(&c,digest,nblocks); //Set context according to padded message and passing the tag
 
         f = fopen (newdata_file, "rb"); //Open new data file (padded) to append
         char * new_data=0;
@@ -108,7 +109,8 @@ unsigned char *file2md5(const char *filename, const char *digest_file, const cha
             }
             fclose (f);
         }
-
+        else
+            return NULL;
 
         length*=8; //To bits
 
@@ -131,6 +133,8 @@ unsigned char *file2md5(const char *filename, const char *digest_file, const cha
 
         return out;
     }
+
+    return NULL;
 }
 
 
@@ -139,7 +143,7 @@ int main(int argc, char **argv) {
    if( argc == 4 ) {
         unsigned char * new_tag=0;
         new_tag=file2md5(argv[1],argv[2],argv[3]);
-        printf("\nFORGER TAG:");
+        printf("FORGER TAG:\t");
         for (int i = 0; i < 16; i++)
             printf("%02x", new_tag[i]);
         putchar ('\n');      
