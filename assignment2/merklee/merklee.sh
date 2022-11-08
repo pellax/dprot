@@ -10,23 +10,25 @@ prefixdoc=0x35
 echo "$prefixnode" >> ./docs/node.pre
 echo "$prefixdoc" >> ./docs/doc.pre
 #concatenate prefix to doc
-for i in {0..$factor};
+for ((i = 0; i <= $factor; i++))
 do
 	cat ./docs/doc.pre ./docs/doc$i.dat | openssl dgst -sha1 -binary > "./nodes/node0.$i"
 done
-for  i in {0..3};
+for (( i = 0; i <= 3;i++ ))
 do
-	for j in {0..$factor};
+	for (( j = 0; j <= $factor;j++ ))
 	do	
-		if [-f "./nodes/node$i.${2*j+1}"];
+		if [[ -f "./nodes/node$i.$(( 2*$j+1 ))" && -f "./nodes/node$i.$(( 2*$j ))" ]]
 		then 
-			cat ./docs/node.pre ./nodes/node$i.${2*j} ./nodes/node$i.${2*j+1} | openssl dgst -sha1 -binary > "./nodes/node$(i+1).$j"
-		else	
-			cat ./docs/node.pre ./nodes/node$i.${2*j}  | openssl dgst -sha1 -binary > "./nodes/node$(i+1).$j"
-                fi 	
+			cat ./docs/node.pre ./nodes/node$i.$(( 2*$j )) ./nodes/node$i.$(( 2*$j+1 )) | openssl dgst -sha1 -binary > "./nodes/node$(( $i+1 )).$j"
+		elif [[ -f "./node/node$i.$(( 2*$j ))" ]]	
+		then
+			cat ./docs/node.pre ./nodes/node$i.$(( 2*$j ))  | openssl dgst -sha1 -binary > "./nodes/node$(( $i+1 )).$j"
+		 
+		fi 	
 	done
 
-	factor=$((factor/division))
+	factor=$(( $factor/$division ))
 	echo "$factor"
 done
 
