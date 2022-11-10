@@ -16,16 +16,16 @@ do
 	echo -n "0:$i:" >> hashtree.txt 
 	cat ./nodes/node0.$i >> hashtree.txt
 done
-for (( i = 0; i <= 4;i++ ))
+for (( i = 0; i < 4;i++ ))
 do
-	for (( j = 0; j < $factor;j++ ))
+	for (( j = 0; j <= $factor;j++ ))
 	do	
 		if [[ -f "./nodes/node$i.$(( 2*$j+1 ))" && -f "./nodes/node$i.$(( 2*$j ))" ]]
 		then 
 			cat ./docs/node.pre ./nodes/node$i.$(( 2*$j )) ./nodes/node$i.$(( 2*$j+1 )) | openssl dgst -sha1 -binary | xxd -p > "./nodes/node$(( $i+1 )).$j"
 			echo -n "$(($i+1)):$j: " >> hashtree.txt
 		        cat ./nodes/node$(( $i+1 )).$j >> hashtree.txt	
-		elif [[ -f "./node/node$i.$(( 2*$j ))" ]]	
+		elif [[ -f "./nodes/node$i.$(( 2*$j ))" ]]	
 		then
 			cat ./docs/node.pre ./nodes/node$i.$(( 2*$j ))  | openssl dgst -sha1 -binary | xxd -p > "./nodes/node$(( $i+1 )).$j" 
 			echo -n "$(($i+1)):$j: " >> hashtree.txt
