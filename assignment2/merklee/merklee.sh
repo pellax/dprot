@@ -7,8 +7,15 @@ division=2
 factor=10
 prefixnode=0xE8
 prefixdoc=0x35
-echo "$prefixnode" > ./docs/node.pre
-echo "$prefixdoc" > ./docs/doc.pre
+echo -n "$prefixnode" | xxd -p  > ./docs/node.pre
+echo -n "$prefixdoc" | xxd -p  > ./docs/doc.pre
+echo -n "MerkleeTree:sha1:" >> hashtree.txt
+cat ./docs/node.pre | tr -d '\n' >> hashtree.txt
+echo -n ":" >> hashtree.txt
+cat ./docs/doc.pre | tr -d '\n' >> hashtree.txt
+echo -n ":$factor:" >> hashtree.txt
+echo -n "5:linux" >> hashtree.txt
+echo -e '' >> hashtree.txt
 #concatenate prefix to doc
 for ((i = 0; i < $factor; i++))
 do
@@ -36,4 +43,5 @@ do
 	factor=$(( $factor/$division ))
 	echo "$factor"
 done
-
+hash=$( cat ./nodes/node4.0 )  
+sed -i "1 s/linux/$hash/1" hashtree.txt
