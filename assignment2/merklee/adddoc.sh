@@ -1,5 +1,7 @@
 #!/bin/bash
-
+if [ "$#" -ne 0 ]; then
+    echo "Illegal number of parameters, this function adds one more standard node"
+fi
 echo "hello10" > "./docs/doc"10".dat"
 
 division=2
