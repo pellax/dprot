@@ -1,14 +1,14 @@
 #!/bin/bash
-if [[ $# -ne 2 ]]
+if [[ $# -ne 3 ]]
 then 
-	echo "Wrong number of parameters, first parameter is the position, secondo parameter is the node you want to build the proof for "
+	echo "Wrong number of parameters, first parameter is the position, secondo parameter is the node you want to build the proof for, third is the number of docs "
 else
 for (( i = 0; i < 10; i++))
 do
     echo "hello$i" > "./docs/doc"$i".dat"
 done
 division=2
-factor=10
+factor=$3
 prefixnode=0xE8
 prefixdoc=0x35
 echo -n "$prefixnode" | xxd -p  > ./docs/node.pre
@@ -36,5 +36,5 @@ do
 	fi
 done
 		        
-sed -i "1 s/linux/$(cat hashtree.txt | grep "MerkleeTree" | cut -d : -f 7)/1" proof.txt
+sed -i "1 s/linux/$(cat hashtree.txt | grep "^MerkleeTree" | cut -d : -f 7)/1" proof.txt
 fi

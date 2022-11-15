@@ -32,11 +32,13 @@ do
 			cat ./docs/node.pre ./nodes/node$i.$(( 2*$j )) ./nodes/node$i.$(( 2*$j+1 )) | openssl dgst -sha1 -binary | xxd -p > "./nodes/node$(( $i+1 )).$j"
 			echo -n "$(( $i+1 )):$j:" >> hashtree.txt
 		        cat ./nodes/node$(( $i+1 )).$j >> hashtree.txt	
+		        cat ./nodes/node$(( $i+1 )).$j 	
 		elif [[ -f "./nodes/node$i.$((2*$j))" ]]	
 		then
 			cat ./docs/node.pre ./nodes/node$i.$(( 2*$j ))  | openssl dgst -sha1 -binary | xxd -p > "./nodes/node$(( $i+1 )).$j" 
 			echo -n "$(( $i+1 )):$j:" >> hashtree.txt
 		        cat ./nodes/node$(( $i+1 )).$j >> hashtree.txt	
+		        cat ./nodes/node$(( $i+1 )).$j	
 		fi 	
 	done
 
