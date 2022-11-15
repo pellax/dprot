@@ -1,0 +1,2 @@
+rm ./nodes/*.*
+rm ./docs/*.*
