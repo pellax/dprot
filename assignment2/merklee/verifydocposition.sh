@@ -11,8 +11,14 @@ else
 
 	elem=$factor
 	
-
-		
+	temp=$elem
+	height=0
+	while [ $temp -gt 0 ]
+	do
+        	temp=$(( $temp/$division ))
+        	((height+=1))
+	done
+	
 	echo "no entra"
 		
 	#Make copy of the hashtree
@@ -20,7 +26,7 @@ else
 	#line="$( cat proof.txt | grep 0:$1: )"
 	cat verify.txt
 	#sed -i "s/$line/0:$1:$newleaf/g" proof.txt #substitute the line with the new leaf now lets recalculate the merklee tree
-	for (( i = 0; i < 4; i++ )) # taking the original file lets build the whole tree and calculate the hash
+	for (( i = 0; i < height; i++ )) # taking the original file lets build the whole tree and calculate the hash
 	do
 		for (( j = 0; j <= $factor; j++ ))
 		do	

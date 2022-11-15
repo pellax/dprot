@@ -20,6 +20,13 @@ echo -n "$finalfactor:" >> hashtree.txt
 echo -n "5:linux" >> hashtree.txt
 echo -e '' >> hashtree.txt
 #concatenate prefix to doc
+temp=$finalfactor
+height=0
+while [ $temp -gt 0 ]
+do
+	temp=$(( $temp/$division ))
+	((height+=1))
+done
 for (( i = $factor;i < $finalfactor; i++))
 do
 	echo "hello$i" > ./docs/doc$i.dat
@@ -30,7 +37,7 @@ do
 	echo -n "0:$i:" >> hashtree.txt 
 	cat ./nodes/node0.$i >> hashtree.txt
 done
-for (( i = 0; i < 4;i++ ))
+for (( i = 0; i < $height;i++ ))
 do
 	for (( j = 0; j <= $finalfactor;j++ ))
 	do	
