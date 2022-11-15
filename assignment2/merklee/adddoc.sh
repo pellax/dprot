@@ -8,6 +8,7 @@ division=2
 factor=10
 prefixnode=0xE8
 prefixdoc=0x35
+finalfactor=$(( $factor+$addnodes ))
 echo -n "$prefixnode" | xxd -p  > ./docs/node.pre
 echo -n "$prefixdoc" | xxd -p  > ./docs/doc.pre
 > hashtree.txt
@@ -19,7 +20,6 @@ echo -n "$finalfactor:" >> hashtree.txt
 echo -n "5:linux" >> hashtree.txt
 echo -e '' >> hashtree.txt
 #concatenate prefix to doc
-finalfactor=$(( $factor+$addnodes ))
 for (( i = $factor;i < $finalfactor; i++))
 do
 	echo "hello$i" > ./docs/doc$i.dat
