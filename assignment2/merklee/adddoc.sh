@@ -2,13 +2,26 @@
 if [ "$#" -ne 1 ]; then
     echo "Wrong number of parameter, first parameter indicate the number of nodes you want to add to original tree"
 fi
-echo "hello10" > "./docs/doc"10".dat"
+
 addnodes=$1
 division=2
 factor=10
 prefixnode=0xE8
 prefixdoc=0x35
 finalfactor=$(( $factor+$addnodes ))
+temp=$finalfactor
+height=0
+d=$(echo "sqrt($temp)" | bc)
+if [[ $d=~^[0-9] ]]
+then
+        ((temp-=1))
+fi
+while [ $temp -gt 0 ]
+do
+        temp=$(( $temp/$division ))
+        ((height+=1))
+done
+echo -n "$finalfactor"
 echo -n "$prefixnode" | xxd -p  > ./docs/node.pre
 echo -n "$prefixdoc" | xxd -p  > ./docs/doc.pre
 > hashtree.txt
@@ -16,17 +29,11 @@ echo -n "MerkleeTree:sha1:" >> hashtree.txt
 cat ./docs/node.pre | tr -d '\n' >> hashtree.txt
 echo -n ":" >> hashtree.txt
 cat ./docs/doc.pre | tr -d '\n' >> hashtree.txt
+echo -n ":" >> hashtree.txt
 echo -n "$finalfactor:" >> hashtree.txt
-echo -n "5:linux" >> hashtree.txt
+echo -n "$(( $height+1 )):linux" >> hashtree.txt
 echo -e '' >> hashtree.txt
 #concatenate prefix to doc
-temp=$finalfactor
-height=0
-while [ $temp -gt 0 ]
-do
-	temp=$(( $temp/$division ))
-	((height+=1))
-done
 for (( i = $factor;i < $finalfactor; i++))
 do
 	echo "hello$i" > ./docs/doc$i.dat

@@ -13,9 +13,15 @@ else
 	
 	temp=$elem
 	height=0
+	d=$(echo "sqrt($temp)" | bc)
+	if [[ $d=~^[0-9] ]]
+	then
+        	((temp-=1))
+	fi
+
 	while [ $temp -gt 0 ]
 	do
-        	temp=$(( $temp/$division ))
+        	temp=$(( $temp/$half ))
         	((height+=1))
 	done
 	

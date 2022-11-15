@@ -1,13 +1,26 @@
 #!/bin/bash
 if [[ $# -ne 3 ]]
 then 
-	echo "Wrong number of parameters, first parameter is the position, secondo parameter is the node you want to build the proof for, third is the number of docs "
+	echo "Wrong number of parameters, first parameter is the position, secondo parameter is the doc you want to build the proof for, third is the number of docs "
 else
-for (( i = 0; i < 10; i++))
+division=2
+for (( i = 0; i < $3; i++))
 do
     echo "hello$i" > "./docs/doc"$i".dat"
 done
-division=2
+temp=$3
+height=0
+d=$(echo "sqrt($temp)" | bc)
+if [[ $d=~^[0-9] ]]
+then
+        ((temp-=1))
+fi
+while [ $temp -gt 0 ]
+do
+        temp=$(( $temp/$division ))
+        ((height+=1))
+done
+
 factor=$3
 prefixnode=0xE8
 prefixdoc=0x35
@@ -18,7 +31,7 @@ cat ./docs/node.pre | tr -d '\n' >> proof.txt
 echo -n ":" >> proof.txt
 cat ./docs/doc.pre | tr -d '\n' >> proof.txt
 echo -n ":$factor:" >> proof.txt
-echo -n "5:linux" >> proof.txt
+echo -n "$(( $height+1 )):linux" >> proof.txt
 echo -e '' >> proof.txt
 position=$1
 #concatenate prefix to doc
