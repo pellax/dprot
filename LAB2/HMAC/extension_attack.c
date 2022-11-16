@@ -140,10 +140,3 @@ int main(int argc, char **argv) {
 
     return 0;
 }
-
-
-//Llamar a set_ctx desde un estado nulo y pasando el tag, junto a los bloques totales
-//Llamar a update con el forgery
-//Obtener el nuevo tag tras llamar a Final
-
-//Verificar con ssl
