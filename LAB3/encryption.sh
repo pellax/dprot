@@ -12,11 +12,11 @@ else
 
 	if [ -f $1 -a -f $2 -a -f $3 ]; then
 
-	openssl genpkey -paramfile $1 -out aux_files/ephkey.pem #gen ephkey
+	openssl genpkey -paramfile $1 -out aux_files/eph_pkey.pem #gen ephkey
 
-	openssl pkey -in aux_files/ephkey.pem -pubout -out aux_files/ephpubkey.pem #extract public part of ephkey
+	openssl pkey -in aux_files/eph_pkey.pem -pubout -out aux_files/eph_pubkey.pem #extract public part of ephkey
 
-	openssl pkeyutl -inkey aux_files/ephkey.pem -derive -peerkey $2 -out aux_files/commonsecret.bin #gen common secret
+	openssl pkeyutl -inkey aux_files/eph_pkey.pem -derive -peerkey $2 -out aux_files/commonsecret.bin #gen common secret
 	
 	cat aux_files/commonsecret.bin | openssl dgst -sha256 -binary > aux_files/sha256.txt #hash secret
 
@@ -34,7 +34,7 @@ else
 
 	#CIPHERTEXT.PEM GENERATION (ephpubkey.pem, iv.bin, ciphertext.bin, tag.bin)
 
-	cat aux_files/ephpubkey.pem > ciphertext.pem
+	cat aux_files/eph_pubkey.pem > ciphertext.pem
 	echo "-----BEGIN AES-128-CBC IV-----" >> ciphertext.pem
 	cat aux_files/iv.bin | openssl base64 >> ciphertext.pem
 	echo "-----END AES-128-CBC IV-----" >> ciphertext.pem
