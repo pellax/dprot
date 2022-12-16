@@ -10,7 +10,7 @@ then
 
 else
 
-	if [ -f $1 -a -f $2 ]; then
+	if [ -f $1 -a -f $2 -a -f $3 ]; then
 
 	openssl genpkey -paramfile $1 -out aux_files/ephkey.pem #gen ephkey
 
