@@ -14,10 +14,7 @@ else
 
 	openssl genpkey -paramfile $1 -out aux_files/ephkey.pem #gen ephkey
 
-
-
 	openssl pkey -in aux_files/ephkey.pem -pubout -out aux_files/ephpubkey.pem #extract public part of ephkey
-
 
 	openssl pkeyutl -inkey aux_files/ephkey.pem -derive -peerkey $2 -out aux_files/commonsecret.bin #gen common secret
 	
@@ -35,8 +32,8 @@ else
 
 	cat aux_files/iv.bin aux_files/ciphertext.bin | openssl dgst -sha256 -mac hmac -macopt hexkey:`cat aux_files/k2.bin | xxd -p` -binary > aux_files/tag.bin #gen binary tag
 
-
 	#CIPHERTEXT.PEM GENERATION (ephpubkey.pem, iv.bin, ciphertext.bin, tag.bin)
+
 	cat aux_files/ephpubkey.pem > ciphertext.pem
 	echo "-----BEGIN AES-128-CBC IV-----" >> ciphertext.pem
 	cat aux_files/iv.bin | openssl base64 >> ciphertext.pem
