@@ -12,6 +12,8 @@ else
 
 	if [ -f $1 -a -f $2 -a -f $3 ]; then
 
+	mkdir -p aux_files #auxiliary credentials used
+
 	openssl genpkey -paramfile $1 -out aux_files/eph_pkey.pem #gen ephkey
 
 	openssl pkey -in aux_files/eph_pkey.pem -pubout -out aux_files/eph_pubkey.pem #extract public part of ephkey

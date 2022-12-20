@@ -12,6 +12,8 @@ else
 
 	if [ -f $1 -a -f $2 ]; then
 
+	mkdir -p aux_files #auxiliary credentials used
+
 	#READING CIPHERTEXT.PEM AND OBTAINING AUX FILES
 
 	echo  "-----BEGIN PUBLIC KEY-----" > aux_files/eph_pubkey.pem
