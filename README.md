@@ -13,4 +13,4 @@ by Alejandro J. Capella Del Solar & Cristian Fernández Jiménez
 ## Lab 3: Public Key Encryption
 ### - Hashed ElGamal + Hybrid Encryption + HMAC fully operational crypto system
 
-## - Report: Lightweight Cryptography
+## Report: Lightweight Cryptography
